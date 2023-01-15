@@ -1,10 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from 'formik';
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { passwordValidate } from "../utilities/validate";
+import useFetch from "../hooks/fetch.hook";
+import { useAuthStore } from "../store/store";
+import { signIn } from "../utilities/coreServiceAPI";
 
 export default function Password() {
+  const navigate=useNavigate();
+  const {email}=useAuthStore(state=>state.auth);
+  const [{isLoading, apiData, serverError}]=useFetch(`user/account/${email}`);
+
+
   const formik = useFormik({
     initialValues : {
       password : ''
@@ -13,11 +21,21 @@ export default function Password() {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit : async values => {
-      console.log(values)
-
+      let signinPromise=signIn({email, password:values.password});
+      toast.promise(signinPromise,{
+        loading:'please wait',
+        success:<b>sign in success</b>,
+        error:<b>password not match</b>
+      })
+      signinPromise.then(res=>{
+        let {token}=res.data;
+        localStorage.setItem('token', token);
+        navigate('/profile');
+      })
     }
   })
-  
+  if(isLoading) return <h1 className='text-2xl font-bold'>Loading</h1>
+  if(serverError) return <h1 className="text-xl text-red-500">{serverError.message}</h1>
   return (
     <>
       {/* Page Container */}
@@ -40,7 +58,7 @@ export default function Password() {
                   {/* <span>Company</span> */}
                 </h1>
                 <p className="text-gray-500">
-                  Welcome, please sign in to your dashboard
+                  Welcome, please sign in to your dashboard {apiData?.firstName} || {apiData?.email}
                 </p>
               </div>
               {/* END Header */}

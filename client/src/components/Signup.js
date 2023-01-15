@@ -1,10 +1,12 @@
 import React from "react";
 import { useFormik } from 'formik';
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { signUpValidate } from "../utilities/validate";
-
+import { signUp } from "../utilities/coreServiceAPI";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate=useNavigate();
   const formik = useFormik({
     initialValues : {
       email:'',
@@ -15,8 +17,13 @@ export default function Signup() {
     validateOnChange: false,
     onSubmit : async values => {
       values=await Object.assign(values);
-      console.log(values);
-
+      let signupPromise=signUp(values);
+      toast.promise(signupPromise,{
+        loading:'please wait',
+        success:<b>sign up success</b>,
+        error:<b>sign up unsuccessful</b>
+      })
+      signupPromise.then(function(){navigate('/')});
     }
   })
 

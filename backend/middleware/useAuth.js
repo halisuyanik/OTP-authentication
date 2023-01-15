@@ -1,6 +1,7 @@
 const AppUser=require('../models/AppUserModel');
 const jwt=require('jsonwebtoken');
-const env=require('../config');
+// const env=require('../config');
+require('dotenv').config();
 
 const useAuth=async (req,res,next)=>{
     const {authorization}=req.headers;
@@ -9,7 +10,7 @@ const useAuth=async (req,res,next)=>{
     }
     const token=authorization.split(' ')[1];
     try{
-        const {_id}=jwt.verify(token, env.JWT_SECRET);
+        const {_id}=jwt.verify(token, process.env.JWT_SECRET);
         req.user=await AppUser.findOne({_id}).select('_id');
         next();
     }

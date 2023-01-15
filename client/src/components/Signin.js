@@ -1,23 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from 'formik';
 import { Toaster } from "react-hot-toast";
 import {emailValidate} from '../utilities/validate'
+import {useAuthStore} from '../store/store'
 
 export default function Signin() {
+  const navigate=useNavigate();
+  const setEmail=useAuthStore(state=>state.setEmail)
 
   const formik = useFormik({
     initialValues : {
       email : ''
     },
-    // validationSchema:Yup.object({
-    //   email: Yup.string().required("email required"),
-    // }),
     validate:emailValidate,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit : async values => {
-      console.log(values)
+      setEmail(values.email);
+      navigate('/password');
 
     }
   })

@@ -1,26 +1,40 @@
 import React from "react";
 import { useFormik } from "formik";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { profileValidate } from "../utilities/validate";
+import useFetch from "../hooks/fetch.hook";
+import { useAuthStore } from "../store/store";
+import { updateUser } from "../utilities/coreServiceAPI";
 
 export default function Profile() {
+  const {email}=useAuthStore(state=>state.auth);
+  const [{isLoading, apiData, serverError}]=useFetch(`user/account/${email}`);
   const formik = useFormik({
     initialValues: {
-      email: "",
-      firstname: "",
-      lastname: "",
-      adress:"",
-      mobile:"",
+      email: apiData?.email || "",
+      firstName: apiData?.firstName || "",
+      lastName: apiData?.lastName || "",
+      address: apiData?.address || "",
+      mobile:apiData?.mobile || "",
     },
     validate: profileValidate,
+    enableReinitialize:true,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
       values = await Object.assign(values);
-      console.log(values);
+      let updatePromise=updateUser(values);
+      toast.promise(updatePromise,{
+        loading:'please wait',
+        success:<b>update succes</b>,
+        error:<b>update unsuccessful</b>
+      })
     },
   });
 
+  if(isLoading) return <h1 className='text-2xl font-bold'>Loading</h1>
+  if(serverError) return <h1 className="text-xl text-red-500">{serverError.message}</h1>
+  
   return (
     <>
       {/* Page Container */}
@@ -123,8 +137,8 @@ export default function Profile() {
                       </div>
                       <div className="space-y-1">
                       <label
-                          htmlFor="adress"
-                          name="adress"
+                          htmlFor="address"
+                          name="address"
                           className="font-medium"
                         >
                           Address

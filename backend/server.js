@@ -4,7 +4,7 @@ const cors =require('cors');
 const morgan =require('morgan');
 const { MongoMemoryServer } =require("mongodb-memory-server");
 const userRoutes =require('./routes/user');
-
+const env=require('./config');
 
 async function connect(){
     const mongodb = await MongoMemoryServer.create();
@@ -26,7 +26,7 @@ app.disable('x-powered-by');
 
 
 
-const port=5000;
+const port=process.env.PORT;
 
 app.get('/', (req, res) => {
     

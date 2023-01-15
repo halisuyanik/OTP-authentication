@@ -1,5 +1,5 @@
 import toast  from "react-hot-toast";
-
+import {authenticate} from './coreServiceAPI'
 
 
 function emailVerify(errors={}, values){
@@ -17,6 +17,12 @@ function emailVerify(errors={}, values){
 
 export async function emailValidate(values){
     const errors=emailVerify({},values)
+    if(values.email){
+        const {status}=await authenticate(values.email);
+        if(status!==200){
+            errors.exist=toast.error('email does not exist');
+        }
+    }
     return errors;
 }
 
