@@ -7,8 +7,7 @@ import { useAuthStore } from "../store/store";
 import { updateUser } from "../utilities/coreServiceAPI";
 
 export default function Profile() {
-  const {email}=useAuthStore(state=>state.auth);
-  const [{isLoading, apiData, serverError}]=useFetch(`user/account/${email}`);
+  const [{isLoading, apiData, serverError}]=useFetch();
   const formik = useFormik({
     initialValues: {
       email: apiData?.email || "",

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 
 const userUriAPI="/api/user";
 
@@ -82,4 +83,11 @@ export async function resetPassword({email, password}){
     } catch (error) {
         return Promise.reject({error})
     }
+}
+
+export async function getEmail(){
+    const token=localStorage.getItem('token');
+    if(!token) return Promise.reject("Cannot find token");
+    let decode=jwtDecode(token);
+    return decode;
 }
