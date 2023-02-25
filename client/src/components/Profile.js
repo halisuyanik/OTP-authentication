@@ -3,11 +3,12 @@ import { useFormik } from "formik";
 import toast, { Toaster } from "react-hot-toast";
 import { profileValidate } from "../utilities/validate";
 import useFetch from "../hooks/fetch.hook";
-import { useAuthStore } from "../store/store";
 import { updateUser } from "../utilities/coreServiceAPI";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [{isLoading, apiData, serverError}]=useFetch();
+  const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
       email: apiData?.email || "",
@@ -33,7 +34,10 @@ export default function Profile() {
 
   if(isLoading) return <h1 className='text-2xl font-bold'>Loading</h1>
   if(serverError) return <h1 className="text-xl text-red-500">{serverError.message}</h1>
-  
+  function handleLogout(){
+    localStorage.removeItem('token')
+    navigate('/')
+  }
   return (
     <>
       {/* Page Container */}
@@ -70,6 +74,8 @@ export default function Profile() {
                   {/* <span>Company</span> */}
                 </h1>
                 <p className="text-gray-500">Welcome, your dashboard</p>
+                <p></p>
+                <button onClick={()=>handleLogout()}>Logout</button>
               </div>
               {/* END Header */}
 

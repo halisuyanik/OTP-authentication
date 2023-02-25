@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import toast, { Toaster } from "react-hot-toast";
 import { signUpValidate } from "../utilities/validate";
 import { signUp } from "../utilities/coreServiceAPI";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const navigate=useNavigate();
